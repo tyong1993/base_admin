@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>配置管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    {include file="public/common_static" /}
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+
+                <div style="padding-bottom: 10px;padding-top: 20px;margin-left: 10px">
+                    {if (buttonAuth('shhousevillage/add'))}
+                    <button class="layui-btn layuiadmin-btn-admin" data-type="add" id="addNode">
+                        <i class="layui-icon">&#xe654;</i> 添加区域
+                    </button>
+                    {/if}
+                    <blockquote class="layui-elem-quote" style="width: 300px;float: right;border-left: 5px solid #FFB800">
+                        提示： 红色 <i class="layui-icon layui-icon-right" style="color: #FF5722"></i> 表示下面有子配置，可点击打开
+                    </blockquote>
+                </div>
+                <div class="layui-card-body">
+
+                    <table id="demo" lay-filter="test"></table>
+
+                    <table class="layui-table">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>名称</th>
+                            <th>分类</th>
+                            <th>权重</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {foreach name="tree" item="vo"}
+                        <tr>
+                            <td>{$vo['id']}</td>
+                            <td>{$vo['name']}</td>
+                            <td>{$vo['type']}</td>
+                            <td>{$vo['weight']}</td>
+                            <td>
+                                <div class="layui-btn-group">
+                                    {if (buttonAuth('shhousevillage/add'))}
+                                    <button type="button" class="layui-btn layui-btn-sm" onclick="addSub(this)" data-pid="{$vo['id']}" data-name="{$vo['name']}">
+                                        <i class="layui-icon">&#xe654;</i> 添加子配置
+                                    </button>
+                                    {/if}
+                                    {if (buttonAuth('shhousevillage/edit'))}
+                                    <button type="button" class="layui-btn layui-btn-sm layui-bg-blue" onclick="editNode(this)" data-id="{$vo['id']}" data-pid="{$vo['pid']}">
+                                        <i class="layui-icon">&#xe642;</i> 编辑配置
+                                    </button>
+                                    {/if}
+                                    {if (buttonAuth('shhousevillage/delete'))}
+                                    <button type="button" class="layui-btn layui-btn-sm layui-bg-red" onclick="delNode(this)" data-id="{$vo['id']}">
+                                        <i class="layui-icon">&#xe640;</i> 删除配置
+                                    </button>
+                                    {/if}
+                                </div>
+                            </td>
+                        </tr>
+                        {if !empty($vo['children'])}
+                        {foreach name="$vo['children']" item="v"}
+                        <tr>
+                            <td>{$v['id']}</td>
+                            <td> &nbsp;&nbsp;&nbsp;&nbsp; <i class="layui-icon layui-icon-right" onclick="showSub(this)" data-flag="0" data-id="{$v['id']}" style="cursor: pointer;{if !empty($v['children'])}color:#FF5722{/if}"></i> {$v['name']}</td>
+                            <td>{$v['type']}</td>
+                            <td>{$v['weight']}</td>
+                            <td>
+                                <div class="layui-btn-group">
+                                    {if (buttonAuth('shhousevillage/edit'))}
+                                    <button type="button" class="layui-btn layui-btn-sm layui-bg-blue" onclick="editNode(this)" data-id="{$v['id']}" data-pid="{$v['pid']}">
+                                        <i class="layui-icon">&#xe642;</i> 编辑配置
+                                    </button>
+                                    {/if}
+                                    {if (buttonAuth('shhousevillage/delete'))}
+                                    <button type="button" class="layui-btn layui-btn-sm layui-bg-red" onclick="delNode(this)" data-id="{$v['id']}">
+                                        <i class="layui-icon">&#xe640;</i> 删除配置
+                                    </button>
+                                    {/if}
+                                </div>
+                            </td>
+                        </tr>
+                        {/foreach}
+                        {/if}
+                        {/foreach}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    function renderTable() {
+        window.location.reload();
+    }
+
+    $(function () {
+
+        $("#addNode").click(function () {
+
+            layTool.open('{:url("shhousevillage/add", ["pid" => 0, "pname" => "区域配置"])}', '添加区域配置', '40%', '50%');
+        });
+    });
+
+    function addSub(obj) {
+
+        var pid = $(obj).attr('data-pid');
+        var pname = $(obj).attr('data-name');
+
+        layTool.open('{:url("shhousevillage/add","",false)}/pid/' + pid + '/pname/' + pname, '添加子配置', '40%', '50%');
+    }
+
+    function editNode(obj) {
+
+        var id = $(obj).attr('data-id');
+        var pid = $(obj).attr('data-pid');
+
+        layTool.open('{:url("shhousevillage/edit","",false)}/pid/' + pid + '/id/' + id, '编辑配置', '40%', '50%');
+    }
+
+    function delNode(obj) {
+
+        var id = $(obj).attr('data-id');
+
+        layui.use('layer', function () {
+
+            var layer = layui.layer;
+
+            layer.ready(function () {
+                var index = layer.confirm('您确定要删除该配置？', {
+                    title: '友情提示',
+                    icon: 3,
+                    btn: ['确定', '取消']
+                }, function(){
+
+                    $.getJSON('{:url("shhousevillage/delete")}', {id: id}, function (res) {
+                        if (res.flag == "success") {
+                            layTool.msg(res.msg);
+
+                            setTimeout(function () {
+                                renderTable();
+                            }, 500);
+                        } else {
+
+                            layTool.alert(res.msg, '', 2);
+                        }
+                    });
+
+                }, function(){
+
+                });
+            });
+        });
+    }
+
+    function showSub(obj) {
+
+        var flag = $(obj).attr('data-flag');
+        if (0 == flag) {
+            $(".tree-" + $(obj).attr('data-id')).show();
+            $(obj).attr('data-flag', 1);
+        } else {
+            $(".tree-" + $(obj).attr('data-id')).hide();
+            $(obj).attr('data-flag', 0);
+        }
+    }
+</script>
+</body>
+</html>

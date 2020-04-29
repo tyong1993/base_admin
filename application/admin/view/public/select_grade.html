@@ -1,0 +1,12 @@
+<select name="{$name}">
+    <option value=""></option>
+    {foreach name="tree" item="vo" key="key"}
+    <?php
+        $levelstr="|- ";
+        for($i=1;$i<$vo["level"];$i++){
+            $levelstr.="|- ";
+        }
+    ?>
+    <option value="{$vo[$value_key]}" {if($value == $vo[$value_key])}selected{/if}>{$levelstr}{$vo[$show_key]}</option>
+    {/foreach}
+</select>

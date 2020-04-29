@@ -1,0 +1,28 @@
+
+
+    <tr {if $level gt 3}style="display: none" class="tree-{$val['parent_id']}"{/if}>
+        <td>{$val['id']}</td>
+        <td>{$level_str|raw} <i class="layui-icon layui-icon-right" onclick="showSub(this)" data-flag="0" data-id="{$val['id']}" style="cursor: pointer;{if !empty($val['children'] && $level egt 3)}color:#FF5722{/if}"></i>{$val['name']}</td>
+        <!--<td><i class="{$val['icon']}"></i></td>-->
+        <!--<td>{if $val['status'] eq 1}启用{else/}禁用{/if}</td>-->
+        <!--<td>{$val['create_time']}</td>-->
+        <td>
+            <div class="layui-btn-group">
+                {if (buttonAuth('systemcategory/add')) && $level<$limit_level}
+                <button type="button" class="layui-btn layui-btn-sm" onclick="addSub(this)" data-pid="{$val['id']}" data-name="{$val['name']}">
+                    <i class="layui-icon">&#xe654;</i> 添加子分类
+                </button>
+                {/if}
+                {if (buttonAuth('systemcategory/edit'))}
+                <button type="button" class="layui-btn layui-btn-sm layui-bg-blue" onclick="editNode(this)" data-id="{$val['id']}" data-pid="{$val['parent_id']}">
+                    <i class="layui-icon">&#xe642;</i> 编辑分类
+                </button>
+                {/if}
+                {if (buttonAuth('systemcategory/delete'))}
+                <button type="button" class="layui-btn layui-btn-sm layui-bg-red" onclick="delNode(this)" data-id="{$val['id']}">
+                    <i class="layui-icon">&#xe640;</i> 删除分类
+                </button>
+                {/if}
+            </div>
+        </td>
+    </tr>

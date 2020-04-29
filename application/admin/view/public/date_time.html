@@ -1,0 +1,74 @@
+<input type="text" name="{$name}" class="layui-input" id="date_time_{$name}" autocomplete="off">
+<script>
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+
+        //执行一个laydate实例
+        laydate.render({
+            /**
+             * 绑定元素
+             */
+                elem: '#date_time_{$name}'
+            /**
+             * 面板类型:
+             *      year,month,date,time,datetime 五种选择
+             */
+                ,type: '{$type}'
+             /**
+             * 时间日期格式:
+             *      该项和type属性搭配使用,可更加灵活的控制时间格式
+             *      可选值:y,M,d,H,m,s和yyyy,MM,dd,HH,mm,ss十种组合方式,前五种不限制位数,后五种限制位数,不足用0补齐
+              *     默认值:后五种加(-)(:)分隔
+             *      例如:yyyy年MM月dd日
+             */
+                {if ($format)}
+                    ,format: '{format}'
+                {/if}
+            /**
+             * 范围选择:
+             *      值可以设置为分隔符,为true则为默认分隔符
+             */
+                {if ($range)}
+                    ,range: '{$range}'
+                {/if}
+            /**
+             * 初始值:
+             *      接受format格式的字符或Date对象,例如'2018-08-18'或者new Date(1534766888000)
+             */
+                {if ($value)}
+                    ,value: '{$value}'
+                {/if}
+            /**
+             *控件打开时触发:
+             *      得到初始的日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+             *      console.log(date);
+             */
+                ,ready: function(date){
+
+                }
+            /**
+             * 值切换时触发:
+             *      年月日时间被切换时都会触发。回调返回三个参数，分别代表：生成的值、日期时间对象、结束的日期时间对象
+             *      得到日期生成的值，如：2017-08-18
+             *      console.log(value);
+             *      得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+             *      console.log(date);
+             *      得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+             *      console.log(endDate);
+             */
+                ,change: function(value, date, endDate){
+
+                }
+            /**
+             * 选择完毕后触发
+             * 点击日期、清空、现在、确定均会触发。回调返回三个参数，分别代表：生成的值、日期时间对象、结束的日期时间对象
+             * console.log(value); //得到日期生成的值，如：2017-08-18
+             * console.log(date); //得到日期时间对象：{year: 2017, month: 8, date: 18, hours: 0, minutes: 0, seconds: 0}
+             * console.log(endDate); //得结束的日期时间对象，开启范围选择（range: true）才会返回。对象成员同上。
+             */
+                ,done: function(value, date, endDate){
+
+                }
+        });
+    });
+</script>

@@ -1,0 +1,102 @@
+
+<!--使用该组件页面必须在头部引入layui相关的js-->
+<button type="button" class="layui-btn" id="button_{$name}">
+    <i class="layui-icon">&#xe67c;</i>上传文件
+</button>
+<input type="hidden" value="{$value}" id="input_{$name}" name="{$name}"/>
+<blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+    预览：
+    <div class="layui-upload-list" id="test-upload-more-list_{$name}">
+        {foreach name="files" item="file"}
+        <div class="upload-pre-item" val="{$file['id']}">
+            <a href="{$file['url']}" target="_blank">
+                {if ($is_image)}
+                <img src="{$file['url']}" class="layui-upload-img">
+                {else /}
+                <span>{$file['url']}</span>
+                {/if}
+            </a>
+            <i class="upload-iocn layui-icon layui-icon-delete" onclick="removeFile(this)"></i>
+        </div>
+        {/foreach}
+    </div>
+    <div style="clear: both"></div>
+</blockquote>
+<style>
+    {if ($is_image)}
+    .upload-iocn{
+        position: absolute;
+        top: -15px;
+        left: 90px;
+    }
+    {/if}
+    .upload-pre-item{
+        position: relative;
+        float: left;
+    }
+    .layui-upload-img {
+        width: 92px;
+        height: 92px;
+        margin: 0 10px 10px 0;
+    }
+</style>
+<script>
+    layui.config({
+        base: '/static/admin/'
+    }).use(['upload'], function(){
+        var $ = layui.$
+            ,upload = layui.upload;
+        //文件上传
+        upload.render({
+            elem: '#button_{$name}'
+            ,accept: 'file'
+            ,multiple:{$is_multiple}
+            ,number:10
+            ,url: '{:url("upload/upload")}'
+            ,done: function(res){
+                if(res.flag == "success") {
+                    //多文件上传模式
+                    if(this.multiple)
+                    {
+                        var value=$('#input_{$name}').val();
+                        $('#input_{$name}').val(value+","+res.data.file.id);
+
+                    }
+                    //单文件上传模式
+                    else
+                    {
+                        $('#input_{$name}').val(res.data.file.id);
+                        $('#test-upload-more-list_{$name}').empty();
+                    }
+                    {if ($is_image)}
+                        var pre='<img src="'+res.data.file.url+'" class="layui-upload-img">';
+                    {else /}
+
+                        var pre='<span>'+res.data.file.url+'</span>';
+                    {/if}
+
+                    $('#test-upload-more-list_{$name}').append('<div class="upload-pre-item" val="'+res.data.file.id+'"><a href="'+res.data.file.url+'" target="_blank">'+pre+'</a><i class="upload-iocn layui-icon layui-icon-delete" onclick="removeFile(this)"></i></div>')
+                    console.log(res.data.file.url)
+                } else {
+                    layTool.alert(res.msg, '友情提示', 2);
+                }
+            }
+        });
+    });
+    //删除一个文件
+    function removeFile(obj) {
+        var node=$(obj).parent();
+        node.remove();
+        countIds();
+    }
+    //重新计算ids
+    function countIds() {
+        var items=$(".upload-pre-item");
+        var ids=0;
+        for(var i=0;i<items.length;i++){
+            ids=ids+","+$(items[i]).attr("val");
+        }
+        $('#input_{$name}').val(ids);
+        console.log(ids);
+    }
+</script>
